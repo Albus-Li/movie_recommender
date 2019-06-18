@@ -767,6 +767,7 @@ load_dir = load_params()
 plt.plot(losses['train'], label='Training loss')
 plt.legend()
 _ = plt.ylim()
+plt.show()
 # %% md
 ## 显示测试Loss
 # 迭代次数再增加一些，下降的趋势会明显一些
@@ -774,6 +775,7 @@ _ = plt.ylim()
 plt.plot(losses['test'], label='Test loss')
 plt.legend()
 _ = plt.ylim()
+plt.show()
 # %% md
 ## 获取 Tensors
 # 使用函数[`get_tensor_by_name()`](
