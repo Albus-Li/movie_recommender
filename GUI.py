@@ -1,5 +1,6 @@
 import sys
-# import Predict
+import Predict
+from Predict import movies_orig, movieid2idx, users_orig, userid2idx
 
 from PyQt5.QtGui import QIntValidator, QDoubleValidator, QRegExpValidator
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QRegExp
@@ -42,11 +43,11 @@ class Window(QWidget):
         userInfLabel.setText("用户信息：")
         userInfLabel.move(200, 10)
 
-        userInfEdit = QLineEdit(self)
-        userInfEdit.setFixedSize(600, 30)
-        userInfEdit.move(265, 10)
-        userInfEdit.setDisabled(True)
-        userInfEdit.setText("请先输入用户Id")
+        self.userInfEdit = QLineEdit(self)
+        self.userInfEdit.setFixedSize(600, 30)
+        self.userInfEdit.move(265, 10)
+        self.userInfEdit.setDisabled(True)
+        self.userInfEdit.setText("请先输入用户Id")
 
         # 电影ID输入框------------------------------------------------------------
         movieLabel = QLabel(self)
@@ -65,22 +66,22 @@ class Window(QWidget):
         movieInfLabel.setText("电影信息：")
         movieInfLabel.move(200, 50)
 
-        movieInfEdit = QLineEdit(self)
-        movieInfEdit.setFixedSize(600, 30)
-        movieInfEdit.move(265, 50)
-        movieInfEdit.setDisabled(True)
-        movieInfEdit.setText("请先输入电影Id")
+        self.movieInfEdit = QLineEdit(self)
+        self.movieInfEdit.setFixedSize(600, 30)
+        self.movieInfEdit.move(265, 50)
+        self.movieInfEdit.setDisabled(True)
+        self.movieInfEdit.setText("请先输入电影Id")
 
         # 预测评分显示框------------------------------------------------------------
         predictScoreLabel = QLabel(self)
         predictScoreLabel.setText("电影预测评分：")
         predictScoreLabel.move(20, 90)
 
-        predictScoreEdit = QLineEdit(self)
-        predictScoreEdit.setFixedSize(300, 30)
-        predictScoreEdit.move(110, 90)
-        predictScoreEdit.setDisabled(True)
-        predictScoreEdit.setText("请先执行推荐算法")
+        self.predictScoreEdit = QLineEdit(self)
+        self.predictScoreEdit.setFixedSize(300, 30)
+        self.predictScoreEdit.move(110, 90)
+        self.predictScoreEdit.setDisabled(True)
+        self.predictScoreEdit.setText("请先执行推荐算法")
 
         # ------------------------------------------------------------
         # 推荐同类型的电影
@@ -89,11 +90,11 @@ class Window(QWidget):
         resultLabel1.move(20, 130)
         resultLabel1.setFixedSize(230, 30)
 
-        resultEdit1 = QTextEdit(self)
-        resultEdit1.setFixedSize(250, 380)
-        resultEdit1.move(0, 170)
-        resultEdit1.setDisabled(True)
-        resultEdit1.setText("请先执行推荐算法")
+        self.resultEdit1 = QTextEdit(self)
+        self.resultEdit1.setFixedSize(250, 380)
+        self.resultEdit1.move(0, 170)
+        self.resultEdit1.setDisabled(True)
+        self.resultEdit1.setText("请先执行推荐算法")
 
         # 推荐用户可能喜欢的电影
         resultLabel2 = QLabel(self)
@@ -101,11 +102,11 @@ class Window(QWidget):
         resultLabel2.move(270, 130)
         resultLabel2.setFixedSize(230, 30)
 
-        resultEdit2 = QTextEdit(self)
-        resultEdit2.setFixedSize(250, 380)
-        resultEdit2.move(250, 170)
-        resultEdit2.setDisabled(True)
-        resultEdit2.setText("请先执行推荐算法")
+        self.resultEdit2 = QTextEdit(self)
+        self.resultEdit2.setFixedSize(250, 380)
+        self.resultEdit2.move(250, 170)
+        self.resultEdit2.setDisabled(True)
+        self.resultEdit2.setText("请先执行推荐算法")
 
         # 推荐喜欢该电影的人
         resultLabel3 = QLabel(self)
@@ -113,11 +114,11 @@ class Window(QWidget):
         resultLabel3.move(520, 130)
         resultLabel3.setFixedSize(230, 30)
 
-        resultEdit3 = QTextEdit(self)
-        resultEdit3.setFixedSize(250, 380)
-        resultEdit3.move(500, 170)
-        resultEdit3.setDisabled(True)
-        resultEdit3.setText("请先执行推荐算法")
+        self.resultEdit3 = QTextEdit(self)
+        self.resultEdit3.setFixedSize(250, 380)
+        self.resultEdit3.move(500, 170)
+        self.resultEdit3.setDisabled(True)
+        self.resultEdit3.setText("请先执行推荐算法")
 
         # 推荐喜欢该电影的人还喜欢看的电影
         resultLabel4 = QLabel(self)
@@ -125,11 +126,11 @@ class Window(QWidget):
         resultLabel4.move(770, 130)
         resultLabel4.setFixedSize(230, 30)
 
-        resultEdit4 = QTextEdit(self)
-        resultEdit4.setFixedSize(250, 380)
-        resultEdit4.move(750, 170)
-        resultEdit4.setDisabled(True)
-        resultEdit4.setText("请先执行推荐算法")
+        self.resultEdit4 = QTextEdit(self)
+        self.resultEdit4.setFixedSize(250, 380)
+        self.resultEdit4.move(750, 170)
+        self.resultEdit4.setDisabled(True)
+        self.resultEdit4.setText("请先执行推荐算法")
         # ------------------------------------------------------------
         hbox = QHBoxLayout()
         hbox.addStretch(1)
@@ -151,12 +152,37 @@ class Window(QWidget):
     def recommendMovies(self):
         print()
         print("➤开始执行推荐电影算法")
-        # Predict.runPredict(234, 1401, 20, 10, 20)
+
+        inferenceScore, stmResult, yfmResult, ofmResult = Predict.runPredict(234, 1401, 20, 10, 20)
+
+        self.userInfEdit.setText(str(users_orig[userid2idx[1401]]))
+        self.movieInfEdit.setText(str(movies_orig[movieid2idx[1401]]))
+
+        self.predictScoreEdit.setText(str(inferenceScore[0][0][0]))
+
+        stmText = ""
+        for val in (stmResult):
+            stmText += str(val)
+            stmText += str(movies_orig[val]) + "\n\n"
+        self.resultEdit1.setText(stmText)
+
+        yfmText = ""
+        for val in (yfmResult):
+            yfmText += str(val)
+            yfmText += str(movies_orig[val]) + "\n\n"
+        self.resultEdit2.setText(yfmText)
+
+        ofmText = ""
+        for val in (ofmResult):
+            ofmText += str(val)
+            ofmText += str(movies_orig[val]) + "\n\n"
+        self.resultEdit4.setText(ofmText)
 
     @pyqtSlot()
     def exitSystem(self):
         sys.exit(app.exec_())
 
+    # --------------------------------------------------------------------------
     def closeEvent(self, event):
         reply = QMessageBox.question(
             self,

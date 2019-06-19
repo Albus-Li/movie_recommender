@@ -4,6 +4,9 @@ import pandas as pd
 import numpy as np
 import random
 
+user_title = ['UserID', 'Gender', 'Age', 'OccupationID', 'Zip-code']
+user = pd.read_table('./ml-1m/users.dat', sep='::', header=None, names=user_title, engine='python')
+
 movies_title = ['MovieID', 'Title', 'Genres']
 movies = pd.read_table('./ml-1m/movies.dat', sep='::', header=None, names=movies_title, engine='python')
 movies.head()
@@ -22,6 +25,9 @@ sentences_size = title_count  # = 15
 window_sizes = {2, 3, 4, 5}
 # 文本卷积核数量
 filter_num = 8
+
+# 用户ID转下标的字典，数据集中用户ID跟下标不一致，比如第5行的数据用户ID不一定是5
+userid2idx = {val[0]: i for i, val in enumerate(user.values)}
 
 # 电影ID转下标的字典，数据集中电影ID跟下标不一致，比如第5行的数据电影ID不一定是5
 movieid2idx = {val[0]: i for i, val in enumerate(movies.values)}
@@ -311,7 +317,9 @@ def recommend_other_favorite_movie(movie_id_val, top_k=20):
 
 
 def runPredict(userId, movieId, topK_STM, topK_YFM, topK_OFM):
-    rating_movie(userId, movieId)
-    recommend_same_type_movie(movieId, topK_STM)
-    recommend_your_favorite_movie(userId, topK_YFM)
-    recommend_other_favorite_movie(movieId, topK_OFM)
+    inferenceScore = rating_movie(userId, movieId)
+    stm = recommend_same_type_movie(movieId, topK_STM)
+    yfm = recommend_your_favorite_movie(userId, topK_YFM)
+    ofm = recommend_other_favorite_movie(movieId, topK_OFM)
+
+    return inferenceScore, stm, yfm, ofm
