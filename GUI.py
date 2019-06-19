@@ -1,10 +1,11 @@
 import sys
-import Predict
+# import Predict
 
-from PyQt5.QtCore import QCoreApplication, pyqtSlot
+from PyQt5.QtGui import QIntValidator, QDoubleValidator, QRegExpValidator
+from PyQt5.QtCore import QCoreApplication, pyqtSlot, QRegExp
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QApplication, QDesktopWidget,
-    QMessageBox)
+    QMessageBox, QLineEdit, QLabel)
 
 
 class Window(QWidget):
@@ -24,6 +25,53 @@ class Window(QWidget):
         exitSystemButton = QPushButton("退出系统")
         exitSystemButton.clicked.connect(self.exitSystem)
 
+        # 用户ID输入框
+        userLabel = QLabel(self)
+        userLabel.setText("用户Id：")
+        userLabel.move(20, 10)
+        userLabel.setStyleSheet("color:red;")
+
+        user_validato = QIntValidator(1, 6040, self)  # 实例化整型验证器，并设置范围为1-6040
+        userLineEdit = QLineEdit(self)  # 整型文本框
+        userLineEdit.setValidator(user_validato)  # 设置验证
+        userLineEdit.setFixedSize(100, 30)
+        userLineEdit.move(70, 10)
+
+        # 用户信息显示框
+        userInfLabel = QLabel(self)
+        userInfLabel.setText("用户信息：")
+        userInfLabel.move(200, 10)
+
+        userInfEdit = QLineEdit(self)
+        userInfEdit.setFixedSize(600, 30)
+        userInfEdit.move(265, 10)
+        userInfEdit.setDisabled(True)
+        userInfEdit.setText("请先输入用户Id")
+
+        # 电影ID输入框------------------------------------------------------------
+        movieLabel = QLabel(self)
+        movieLabel.setText("电影Id：")
+        movieLabel.move(20, 50)
+        movieLabel.setStyleSheet("color:red;")
+
+        movie_validato = QIntValidator(1, 3952, self)  # 实例化整型验证器，并设置范围为1-3952
+        movieLineEdit = QLineEdit(self)  # 整型文本框
+        movieLineEdit.setValidator(movie_validato)  # 设置验证
+        movieLineEdit.setFixedSize(100, 30)
+        movieLineEdit.move(70, 50)
+
+        # 电影信息显示框
+        movieInfLabel = QLabel(self)
+        movieInfLabel.setText("电影信息：")
+        movieInfLabel.move(200, 50)
+
+        movieInfEdit = QLineEdit(self)
+        movieInfEdit.setFixedSize(600, 30)
+        movieInfEdit.move(265, 50)
+        movieInfEdit.setDisabled(True)
+        movieInfEdit.setText("请先输入电影Id")
+
+        # ------------------------------------------------------------
         hbox = QHBoxLayout()
         hbox.addStretch(1)
         hbox.addWidget(recommendMoviesButton)
@@ -42,8 +90,9 @@ class Window(QWidget):
     # 创建鼠标点击事件
     @pyqtSlot()
     def recommendMovies(self):
+        print()
         print("➤开始执行推荐电影算法")
-        Predict.runPredict(234, 1401, 20, 10, 20)
+        # Predict.runPredict(234, 1401, 20, 10, 20)
 
     @pyqtSlot()
     def exitSystem(self):

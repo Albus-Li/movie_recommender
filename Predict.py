@@ -113,6 +113,7 @@ def rating_movie(user_id_val, movie_id_val):
         # Get Prediction
         inference_val = sess.run([inference], feed)
 
+        print("预测值：", inference_val[0][0][0])
         return (inference_val)
 
 
@@ -199,8 +200,7 @@ def recommend_same_type_movie(movie_id_val, top_k=20):
         #     results = (-sim[0]).argsort()[0:top_k]
         #     print(results)
 
-        print()
-        print("➤推荐结果如下：")
+        print("♦推荐结果如下：")
 
         print("您看的电影是：{}".format(movies_orig[movieid2idx[movie_id_val]]))
         print("以下是给您的推荐：")
