@@ -5,7 +5,7 @@ from PyQt5.QtGui import QIntValidator, QDoubleValidator, QRegExpValidator
 from PyQt5.QtCore import QCoreApplication, pyqtSlot, QRegExp
 from PyQt5.QtWidgets import (
     QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QApplication, QDesktopWidget,
-    QMessageBox, QLineEdit, QLabel)
+    QMessageBox, QLineEdit, QLabel, QGridLayout, QFrame, QTextEdit)
 
 
 class Window(QWidget):
@@ -71,6 +71,65 @@ class Window(QWidget):
         movieInfEdit.setDisabled(True)
         movieInfEdit.setText("请先输入电影Id")
 
+        # 预测评分显示框------------------------------------------------------------
+        predictScoreLabel = QLabel(self)
+        predictScoreLabel.setText("电影预测评分：")
+        predictScoreLabel.move(20, 90)
+
+        predictScoreEdit = QLineEdit(self)
+        predictScoreEdit.setFixedSize(300, 30)
+        predictScoreEdit.move(110, 90)
+        predictScoreEdit.setDisabled(True)
+        predictScoreEdit.setText("请先执行推荐算法")
+
+        # ------------------------------------------------------------
+        # 推荐同类型的电影
+        resultLabel1 = QLabel(self)
+        resultLabel1.setText("同类型的电影还有：")
+        resultLabel1.move(20, 130)
+        resultLabel1.setFixedSize(230, 30)
+
+        resultEdit1 = QTextEdit(self)
+        resultEdit1.setFixedSize(250, 380)
+        resultEdit1.move(0, 170)
+        resultEdit1.setDisabled(True)
+        resultEdit1.setText("请先执行推荐算法")
+
+        # 推荐用户可能喜欢的电影
+        resultLabel2 = QLabel(self)
+        resultLabel2.setText("您可能喜欢的电影有：")
+        resultLabel2.move(270, 130)
+        resultLabel2.setFixedSize(230, 30)
+
+        resultEdit2 = QTextEdit(self)
+        resultEdit2.setFixedSize(250, 380)
+        resultEdit2.move(250, 170)
+        resultEdit2.setDisabled(True)
+        resultEdit2.setText("请先执行推荐算法")
+
+        # 推荐喜欢该电影的人
+        resultLabel3 = QLabel(self)
+        resultLabel3.setText("喜欢该电影的人有：")
+        resultLabel3.move(520, 130)
+        resultLabel3.setFixedSize(230, 30)
+
+        resultEdit3 = QTextEdit(self)
+        resultEdit3.setFixedSize(250, 380)
+        resultEdit3.move(500, 170)
+        resultEdit3.setDisabled(True)
+        resultEdit3.setText("请先执行推荐算法")
+
+        # 推荐喜欢该电影的人还喜欢看的电影
+        resultLabel4 = QLabel(self)
+        resultLabel4.setText("喜欢该电影的人还喜欢看：")
+        resultLabel4.move(770, 130)
+        resultLabel4.setFixedSize(230, 30)
+
+        resultEdit4 = QTextEdit(self)
+        resultEdit4.setFixedSize(250, 380)
+        resultEdit4.move(750, 170)
+        resultEdit4.setDisabled(True)
+        resultEdit4.setText("请先执行推荐算法")
         # ------------------------------------------------------------
         hbox = QHBoxLayout()
         hbox.addStretch(1)
