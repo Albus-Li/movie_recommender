@@ -1,21 +1,8 @@
 import tensorflow as tf
-import os
 import pickle
-import shutil
-
 import pandas as pd
-from ipykernel.pylab.config import InlineBackend
-from sklearn.model_selection import train_test_split
 import numpy as np
-from collections import Counter
-
-import re
-from tensorflow.python.ops import math_ops
-from urllib.request import urlretrieve
-from os.path import isfile, isdir
-from tqdm import tqdm
-import zipfile
-import hashlib
+import random
 
 movies_title = ['MovieID', 'Title', 'Genres']
 movies = pd.read_table('./ml-1m/movies.dat', sep='::', header=None, names=movies_title, engine='python')
@@ -39,9 +26,6 @@ filter_num = 8
 # 电影ID转下标的字典，数据集中电影ID跟下标不一致，比如第5行的数据电影ID不一定是5
 movieid2idx = {val[0]: i for i, val in enumerate(movies.values)}
 
-# %% md
-### 超参
-# %%
 # Number of Epochs
 num_epochs = 5
 # Batch Size
@@ -95,12 +79,10 @@ def get_tensors(loaded_graph):
     return uid, user_gender, user_age, user_job, movie_id, movie_categories, movie_titles, targets, lr, dropout_keep_prob, inference, movie_combine_layer_flat, user_combine_layer_flat
 
 
-# %% md
 ## 指定用户和电影进行评分
 # 这部分就是对网络做正向传播，计算得到预测的评分
 
 
-# %%
 def rating_movie(user_id_val, movie_id_val):
     loaded_graph = tf.Graph()  #
     with tf.Session(graph=loaded_graph) as sess:  #
@@ -134,12 +116,9 @@ def rating_movie(user_id_val, movie_id_val):
         return (inference_val)
 
 
-# %%
 rating_movie(234, 1401)
-# %% md
 ## 生成Movie特征矩阵
 # 将训练好的电影特征组合成电影特征矩阵并保存到本地
-# %%
 loaded_graph = tf.Graph()  #
 movie_matrics = []
 with tf.Session(graph=loaded_graph) as sess:  #
@@ -169,12 +148,8 @@ with tf.Session(graph=loaded_graph) as sess:  #
 
 pickle.dump((np.array(movie_matrics).reshape(-1, 200)), open('movie_matrics.p', 'wb'))
 movie_matrics = pickle.load(open('movie_matrics.p', mode='rb'))
-# %%
-movie_matrics = pickle.load(open('movie_matrics.p', mode='rb'))
-# %% md
 ## 生成User特征矩阵
 # 将训练好的用户特征组合成用户特征矩阵并保存到本地
-# %%
 loaded_graph = tf.Graph()  #
 users_matrics = []
 with tf.Session(graph=loaded_graph) as sess:  #
@@ -199,18 +174,13 @@ with tf.Session(graph=loaded_graph) as sess:  #
 
 pickle.dump((np.array(users_matrics).reshape(-1, 200)), open('users_matrics.p', 'wb'))
 users_matrics = pickle.load(open('users_matrics.p', mode='rb'))
-# %%
-users_matrics = pickle.load(open('users_matrics.p', mode='rb'))
 
 
-# %% md
 ## 开始推荐电影
 # 使用生产的用户特征矩阵和电影特征矩阵做电影推荐
-# %% md
 ### 推荐同类型的电影
 # 思路是计算当前看的电影特征向量与整个电影特征矩阵的余弦相似度，取相似度最大的top_k个，这里加了些随机选择在里面，保证每次的推荐稍稍有些不同。
 
-# %%
 def recommend_same_type_movie(movie_id_val, top_k=20):
     loaded_graph = tf.Graph()  #
     with tf.Session(graph=loaded_graph) as sess:  #
@@ -247,15 +217,12 @@ def recommend_same_type_movie(movie_id_val, top_k=20):
         return results
 
 
-# %%
 recommend_same_type_movie(1401, 20)
 
 
-# %% md
 ### 推荐您喜欢的电影
 # 思路是使用用户特征向量与电影特征矩阵计算所有电影的评分，取评分最高的top_k个，同样加了些随机选择部分。
 
-# %%
 def recommend_your_favorite_movie(user_id_val, top_k=10):
     loaded_graph = tf.Graph()  #
     with tf.Session(graph=loaded_graph) as sess:  #
@@ -290,16 +257,14 @@ def recommend_your_favorite_movie(user_id_val, top_k=10):
         return results
 
 
-# %%
 recommend_your_favorite_movie(234, 10)
-# %% md
+
+
 ### 看过这个电影的人还看了（喜欢）哪些电影
 # - 首先选出喜欢某个电影的top_k个人，得到这几个人的用户特征向量。
 # - 然后计算这几个人对所有电影的评分
 # - 选择每个人评分最高的电影作为推荐
 # - 同样加入了随机选择
-# %%
-import random
 
 
 def recommend_other_favorite_movie(movie_id_val, top_k=20):
