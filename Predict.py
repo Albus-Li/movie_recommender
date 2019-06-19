@@ -310,7 +310,7 @@ def recommend_other_favorite_movie(movie_id_val, top_k=20):
             print(val)
             print(movies_orig[val])
 
-        return results
+        return results, users_orig[favorite_user_id - 1]
 
 
 # recommend_other_favorite_movie(1401, 20)
@@ -320,6 +320,6 @@ def runPredict(userId, movieId, topK_STM, topK_YFM, topK_OFM):
     inferenceScore = rating_movie(userId, movieId)
     stm = recommend_same_type_movie(movieId, topK_STM)
     yfm = recommend_your_favorite_movie(userId, topK_YFM)
-    ofm = recommend_other_favorite_movie(movieId, topK_OFM)
+    ofm, userList = recommend_other_favorite_movie(movieId, topK_OFM)
 
-    return inferenceScore, stm, yfm, ofm
+    return inferenceScore, stm, yfm, ofm, userList

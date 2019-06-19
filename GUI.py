@@ -33,10 +33,10 @@ class Window(QWidget):
         userLabel.setStyleSheet("color:red;")
 
         user_validato = QIntValidator(1, 6040, self)  # 实例化整型验证器，并设置范围为1-6040
-        userLineEdit = QLineEdit(self)  # 整型文本框
-        userLineEdit.setValidator(user_validato)  # 设置验证
-        userLineEdit.setFixedSize(100, 30)
-        userLineEdit.move(70, 10)
+        self.userLineEdit = QLineEdit(self)  # 整型文本框
+        self.userLineEdit.setValidator(user_validato)  # 设置验证
+        self.userLineEdit.setFixedSize(100, 30)
+        self.userLineEdit.move(70, 10)
 
         # 用户信息显示框
         userInfLabel = QLabel(self)
@@ -56,10 +56,10 @@ class Window(QWidget):
         movieLabel.setStyleSheet("color:red;")
 
         movie_validato = QIntValidator(1, 3952, self)  # 实例化整型验证器，并设置范围为1-3952
-        movieLineEdit = QLineEdit(self)  # 整型文本框
-        movieLineEdit.setValidator(movie_validato)  # 设置验证
-        movieLineEdit.setFixedSize(100, 30)
-        movieLineEdit.move(70, 50)
+        self.movieLineEdit = QLineEdit(self)  # 整型文本框
+        self.movieLineEdit.setValidator(movie_validato)  # 设置验证
+        self.movieLineEdit.setFixedSize(100, 30)
+        self.movieLineEdit.move(70, 50)
 
         # 电影信息显示框
         movieInfLabel = QLabel(self)
@@ -91,7 +91,7 @@ class Window(QWidget):
         resultLabel1.setFixedSize(230, 30)
 
         self.resultEdit1 = QTextEdit(self)
-        self.resultEdit1.setFixedSize(250, 380)
+        self.resultEdit1.setFixedSize(250, 400)
         self.resultEdit1.move(0, 170)
         self.resultEdit1.setDisabled(True)
         self.resultEdit1.setText("请先执行推荐算法")
@@ -103,7 +103,7 @@ class Window(QWidget):
         resultLabel2.setFixedSize(230, 30)
 
         self.resultEdit2 = QTextEdit(self)
-        self.resultEdit2.setFixedSize(250, 380)
+        self.resultEdit2.setFixedSize(250, 400)
         self.resultEdit2.move(250, 170)
         self.resultEdit2.setDisabled(True)
         self.resultEdit2.setText("请先执行推荐算法")
@@ -115,7 +115,7 @@ class Window(QWidget):
         resultLabel3.setFixedSize(230, 30)
 
         self.resultEdit3 = QTextEdit(self)
-        self.resultEdit3.setFixedSize(250, 380)
+        self.resultEdit3.setFixedSize(250, 400)
         self.resultEdit3.move(500, 170)
         self.resultEdit3.setDisabled(True)
         self.resultEdit3.setText("请先执行推荐算法")
@@ -127,7 +127,7 @@ class Window(QWidget):
         resultLabel4.setFixedSize(230, 30)
 
         self.resultEdit4 = QTextEdit(self)
-        self.resultEdit4.setFixedSize(250, 380)
+        self.resultEdit4.setFixedSize(250, 400)
         self.resultEdit4.move(750, 170)
         self.resultEdit4.setDisabled(True)
         self.resultEdit4.setText("请先执行推荐算法")
@@ -150,33 +150,55 @@ class Window(QWidget):
     # 创建鼠标点击事件
     @pyqtSlot()
     def recommendMovies(self):
-        print()
-        print("➤开始执行推荐电影算法")
+        userIdInput = self.userLineEdit.text()
+        movieIdInput = self.movieLineEdit.text()
 
-        inferenceScore, stmResult, yfmResult, ofmResult = Predict.runPredict(234, 1401, 20, 10, 20)
+        print(userIdInput, movieIdInput)
 
-        self.userInfEdit.setText(str(users_orig[userid2idx[1401]]))
-        self.movieInfEdit.setText(str(movies_orig[movieid2idx[1401]]))
+        if len(userIdInput) > 0 and len(movieIdInput) > 0:
+            print()
+            print("➤开始执行推荐电影算法")
 
-        self.predictScoreEdit.setText(str(inferenceScore[0][0][0]))
+            userIdInput = int(userIdInput)
+            movieIdInput = int(movieIdInput)
+            inferenceScore, stmResult, yfmResult, ofmResult, userList = Predict.runPredict(
+                userIdInput, movieIdInput, 20, 10, 20)
 
-        stmText = ""
-        for val in (stmResult):
-            stmText += str(val)
-            stmText += str(movies_orig[val]) + "\n\n"
-        self.resultEdit1.setText(stmText)
+            self.userInfEdit.setText(str(users_orig[userid2idx[userIdInput]]))
+            self.movieInfEdit.setText(str(movies_orig[movieid2idx[movieIdInput]]))
 
-        yfmText = ""
-        for val in (yfmResult):
-            yfmText += str(val)
-            yfmText += str(movies_orig[val]) + "\n\n"
-        self.resultEdit2.setText(yfmText)
+            self.predictScoreEdit.setText(str(inferenceScore[0][0][0]))
 
-        ofmText = ""
-        for val in (ofmResult):
-            ofmText += str(val)
-            ofmText += str(movies_orig[val]) + "\n\n"
-        self.resultEdit4.setText(ofmText)
+            stmText = ""
+            for val in (stmResult):
+                stmText += str(val)
+                stmText += str(movies_orig[val]) + "\n\n"
+            self.resultEdit1.setText(stmText)
+
+            yfmText = ""
+            for val in (yfmResult):
+                yfmText += str(val)
+                yfmText += str(movies_orig[val]) + "\n\n"
+            self.resultEdit2.setText(yfmText)
+
+            likeMovieUsers = ""
+            for val in (userList):
+                likeMovieUsers += str(val) + "\n"
+            self.resultEdit3.setText(likeMovieUsers)
+
+            ofmText = ""
+            for val in (ofmResult):
+                ofmText += str(val)
+                ofmText += str(movies_orig[val]) + "\n\n"
+            self.resultEdit4.setText(ofmText)
+        else:
+            reply = QMessageBox.question(
+                self,
+                'Message',
+                "输入不完整，请补全后再运行",
+                QMessageBox.Yes,
+                QMessageBox.Yes
+            )
 
     @pyqtSlot()
     def exitSystem(self):
