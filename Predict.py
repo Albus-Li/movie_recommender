@@ -116,7 +116,8 @@ def rating_movie(user_id_val, movie_id_val):
         return (inference_val)
 
 
-rating_movie(234, 1401)
+# rating_movie(234, 1401)
+
 ## 生成Movie特征矩阵
 # 将训练好的电影特征组合成电影特征矩阵并保存到本地
 loaded_graph = tf.Graph()  #
@@ -217,7 +218,7 @@ def recommend_same_type_movie(movie_id_val, top_k=20):
         return results
 
 
-recommend_same_type_movie(1401, 20)
+# recommend_same_type_movie(1401, 20)
 
 
 ### 推荐您喜欢的电影
@@ -257,7 +258,7 @@ def recommend_your_favorite_movie(user_id_val, top_k=10):
         return results
 
 
-recommend_your_favorite_movie(234, 10)
+# recommend_your_favorite_movie(234, 10)
 
 
 ### 看过这个电影的人还看了（喜欢）哪些电影
@@ -306,4 +307,11 @@ def recommend_other_favorite_movie(movie_id_val, top_k=20):
         return results
 
 
-recommend_other_favorite_movie(1401, 20)
+# recommend_other_favorite_movie(1401, 20)
+
+
+def runPredict(userId, movieId, topK_STM, topK_YFM, topK_OFM):
+    rating_movie(userId, movieId)
+    recommend_same_type_movie(movieId, topK_STM)
+    recommend_your_favorite_movie(userId, topK_YFM)
+    recommend_other_favorite_movie(movieId, topK_OFM)
