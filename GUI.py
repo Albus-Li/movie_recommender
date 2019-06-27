@@ -1,3 +1,4 @@
+# encoding: utf-8
 import sys
 import Predict
 from Predict import movies_orig, movieid2idx, users_orig, userid2idx
