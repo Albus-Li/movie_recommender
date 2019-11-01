@@ -32,15 +32,15 @@ userid2idx = {val[0]: i for i, val in enumerate(user.values)}
 # 电影ID转下标的字典，数据集中电影ID跟下标不一致，比如第5行的数据电影ID不一定是5
 movieid2idx = {val[0]: i for i, val in enumerate(movies.values)}
 
-# Number of Epochs
+# 迭代次数
 num_epochs = 5
-# Batch Size
+# 批处理大小
 batch_size = 256
 
 dropout_keep = 0.5
-# Learning Rate
+# 学习比率
 learning_rate = 0.0001
-# Show stats for every n number of batches
+
 show_every_n_batches = 20
 
 save_dir = './save'
@@ -92,11 +92,9 @@ def get_tensors(loaded_graph):
 def rating_movie(user_id_val, movie_id_val):
     loaded_graph = tf.Graph()  #
     with tf.Session(graph=loaded_graph) as sess:  #
-        # Load saved model
         loader = tf.train.import_meta_graph(load_dir + '.meta')
         loader.restore(sess, load_dir)
 
-        # Get Tensors from loaded model
         uid, user_gender, user_age, user_job, movie_id, movie_categories, movie_titles, targets, lr, dropout_keep_prob, inference, _, __ = get_tensors(
             loaded_graph)  # loaded_graph
 
@@ -116,7 +114,6 @@ def rating_movie(user_id_val, movie_id_val):
             movie_titles: titles,  # x.take(5,1)
             dropout_keep_prob: 1}
 
-        # Get Prediction
         inference_val = sess.run([inference], feed)
 
         print("预测值：", inference_val[0][0][0])
@@ -130,11 +127,9 @@ def rating_movie(user_id_val, movie_id_val):
 loaded_graph = tf.Graph()  #
 movie_matrics = []
 with tf.Session(graph=loaded_graph) as sess:  #
-    # Load saved model
     loader = tf.train.import_meta_graph(load_dir + '.meta')
     loader.restore(sess, load_dir)
 
-    # Get Tensors from loaded model
     uid, user_gender, user_age, user_job, movie_id, movie_categories, movie_titles, targets, lr, dropout_keep_prob, _, movie_combine_layer_flat, __ = get_tensors(
         loaded_graph)  # loaded_graph
 
@@ -161,11 +156,9 @@ movie_matrics = pickle.load(open('movie_matrics.p', mode='rb'))
 loaded_graph = tf.Graph()  #
 users_matrics = []
 with tf.Session(graph=loaded_graph) as sess:  #
-    # Load saved model
     loader = tf.train.import_meta_graph(load_dir + '.meta')
     loader.restore(sess, load_dir)
 
-    # Get Tensors from loaded model
     uid, user_gender, user_age, user_job, movie_id, movie_categories, movie_titles, targets, lr, dropout_keep_prob, _, __, user_combine_layer_flat = get_tensors(
         loaded_graph)  # loaded_graph
 
@@ -277,7 +270,7 @@ def recommend_your_favorite_movie(user_id_val, top_k=10):
 def recommend_other_favorite_movie(movie_id_val, top_k=20):
     loaded_graph = tf.Graph()  #
     with tf.Session(graph=loaded_graph) as sess:  #
-        # Load saved model
+
         loader = tf.train.import_meta_graph(load_dir + '.meta')
         loader.restore(sess, load_dir)
 
